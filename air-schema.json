@@ -1,0 +1,223 @@
+{
+  "type": "object",
+  "properties": {
+    "root": {
+      "type": "string",
+      "description": "Working directory, . or absolute path, please note that the directories following must be under root"
+    },
+    "tmp_dir": {
+      "type": "string",
+      "description": "Temporary directory for air"
+    },
+    "testdata_dir": {
+      "type": "string"
+    },
+    "build": {
+      "type": "object",
+      "properties": {
+        "pre_cmd": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of commands to run before each build"
+        },
+        "cmd": {
+          "type": "string",
+          "description": "Just plain old shell command. You could use 'make' as well"
+        },
+        "post_cmd": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of commands to run after ^C"
+        },
+        "bin": {
+          "type": "string",
+          "description": "Binary file yields from 'cmd'"
+        },
+        "full_bin": {
+          "type": "string",
+          "description": "Customize binary, can setup environment variables when run your app"
+        },
+        "args_bin": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Add additional arguments when running binary (bin/full_bin)."
+        },
+        "log": {
+          "type": "string",
+          "description": "This log file is placed in your tmp_dir"
+        },
+        "include_ext": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Watch these filename extensions"
+        },
+        "exclude_dir": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Ignore these filename extensions or directories"
+        },
+        "include_dir": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Watch these directories if you specified"
+        },
+        "exclude_file": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Exclude files"
+        },
+        "include_file": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Watch these files"
+        },
+        "exclude_regex": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Exclude specific regular expressions"
+        },
+        "exclude_unchanged": {
+          "type": "boolean",
+          "description": "Exclude unchanged files"
+        },
+        "follow_symlink": {
+          "type": "boolean",
+          "description": "Follow symlink for directories"
+        },
+        "poll": {
+          "type": "boolean",
+          "description": "Poll files for changes instead of using fsnotify"
+        },
+        "poll_interval": {
+          "type": "integer",
+          "description": "Poll interval (defaults to the minimum interval of 500ms)"
+        },
+        "delay": {
+          "type": "integer",
+          "description": "It's not necessary to trigger build each time file changes if it's too frequent"
+        },
+        "stop_on_error": {
+          "type": "boolean",
+          "description": "Stop running old binary when build errors occur"
+        },
+        "send_interrupt": {
+          "type": "boolean",
+          "description": "Send Interrupt signal before killing process (windows does not support this feature)"
+        },
+        "kill_delay": {
+          "type": [
+            "string",
+            "integer"
+          ],
+          "description": "Delay after sending Interrupt signal"
+        },
+        "rerun": {
+          "type": "boolean",
+          "description": "Rerun binary or not"
+        },
+        "rerun_delay": {
+          "type": "integer",
+          "description": "Delay after each execution"
+        }
+      }
+    },
+    "color": {
+      "type": "object",
+      "properties": {
+        "main": {
+          "type": "string",
+          "description": "Customize main part's color. If no color found, use the raw app log"
+        },
+        "watcher": {
+          "type": "string",
+          "description": "Customize watcher part's color"
+        },
+        "build": {
+          "type": "string",
+          "description": "Customize build part's color"
+        },
+        "runner": {
+          "type": "string",
+          "description": "Customize runner part's color"
+        },
+        "app": {
+          "type": "string"
+        }
+      }
+    },
+    "log": {
+      "type": "object",
+      "properties": {
+        "time": {
+          "type": "boolean",
+          "description": "Show log time"
+        },
+        "main_only": {
+          "type": "boolean",
+          "description": "Only show main log (silences watcher, build, runner)"
+        },
+        "silent": {
+          "type": "boolean",
+          "description": "silence all logs produced by air"
+        }
+      }
+    },
+    "misc": {
+      "type": "object",
+      "properties": {
+        "clean_on_exit": {
+          "type": "boolean",
+          "description": "Delete tmp directory on exit"
+        }
+      }
+    },
+    "screen": {
+      "type": "object",
+      "properties": {
+        "clear_on_rebuild": {
+          "type": "boolean",
+          "description": "Clear screen on rebuild"
+        },
+        "keep_scroll": {
+          "type": "boolean",
+          "description": "Keep scroll position after rebuild"
+        }
+      }
+    },
+    "proxy": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable live-reloading on the browser"
+        },
+        "proxy_port": {
+          "type": "integer",
+          "description": "Port for proxy server"
+        },
+        "app_port": {
+          "type": "integer",
+          "description": "Port for your app"
+        }
+      }
+    }
+  }
+}

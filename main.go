@@ -1,0 +1,130 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+	"reflect"
+	"time"
+
+	"github.com/air-verse/air/runner"
+)
+
+type JsonSchema struct {
+	Schema      string               `json:"$schema,omitempty"`
+	Id          string               `json:"$id,omitempty"`
+	Title       string               `json:"title,omitempty"`
+	Type        interface{}          `json:"type,omitempty"`
+	Items       *JsonSchema          `json:"items,omitempty"`
+	Properties  JsonSchemaProperties `json:"properties,omitempty"`
+	Description string               `json:"description,omitempty"`
+}
+
+type JsonSchemaProperty struct {
+	Name string      `json:"name"`
+	Type *JsonSchema `json:"type"`
+}
+
+type JsonSchemaProperties []JsonSchemaProperty
+
+func (props JsonSchemaProperties) MarshalJSON() ([]byte, error) {
+	result := []byte{}
+	result = append(result, '{')
+	for i, prop := range props {
+		if i > 0 {
+			result = append(result, ',')
+		}
+
+		name, err := json.Marshal(prop.Name)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, name...)
+
+		result = append(result, ':')
+
+		ty, err := json.Marshal(prop.Type)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, ty...)
+	}
+	result = append(result, '}')
+	return result, nil
+}
+
+func typeToSchema(t reflect.Type) *JsonSchema {
+	schema := &JsonSchema{}
+	switch t.Kind() {
+	case reflect.String:
+		schema.Type = "string"
+	case reflect.Bool:
+		schema.Type = "boolean"
+	case reflect.Int64:
+		if t == reflect.TypeOf(time.Duration(0)) {
+			schema.Type = []string{"string", "integer"}
+		} else {
+			schema.Type = "integer"
+		}
+	case reflect.Int:
+		schema.Type = "integer"
+	case reflect.Array:
+		fallthrough
+	case reflect.Slice:
+		schema.Type = "array"
+		schema.Items = typeToSchema(t.Elem())
+	case reflect.Struct:
+		schema.Type = "object"
+		schema.Properties = structSchemaPropeties(t)
+	default:
+		panic(fmt.Sprintf("Unexpected type: %s", t))
+	}
+	return schema
+}
+
+func structSchemaPropeties(t reflect.Type) JsonSchemaProperties {
+	if t.Kind() != reflect.Struct {
+		panic(fmt.Sprintf("expected struct, got %s", t))
+	}
+
+	props := JsonSchemaProperties{}
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		toml, tomlPresent := field.Tag.Lookup("toml")
+		if !tomlPresent {
+			continue
+		}
+
+		fieldSchema := typeToSchema(field.Type)
+
+		usage, usagePresent := field.Tag.Lookup("usage")
+		if usagePresent {
+			fieldSchema.Description = usage
+		}
+
+		props = append(props, JsonSchemaProperty{Name: toml, Type: fieldSchema})
+	}
+	return props
+}
+
+func check(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+func main() {
+	configSchema := typeToSchema(reflect.TypeOf(runner.Config{}))
+	configSchema.Schema = ""
+
+	schemaJson, err := json.MarshalIndent(configSchema, "", "  ")
+	check(err)
+
+	file, err := os.Create("air-schema.json")
+	check(err)
+	_, err = file.Write(schemaJson)
+	check(err)
+
+	err = file.Close()
+	check(err)
+}
