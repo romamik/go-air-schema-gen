@@ -29,4 +29,4 @@ Make sure to replace `"file:///full/path/to/air-schema.json"` with the correct f
 
 # Why not submit to schemastore?
 
-Initially I planned to submit it to (schemastore)[https://schemastore.org], so that it works automatically without extra configuration, but unfortunately there is already a schema that matches with `".air.toml"` filename and I do not see a way around it.
+Initially I planned to submit it to [schemastore](https://schemastore.org), so that it works automatically without extra configuration, but unfortunately there is already a schema that matches with `".air.toml"` filename and I do not see a way around it.
