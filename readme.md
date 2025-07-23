@@ -23,7 +23,7 @@ Add the following to your VS Code settings:
         ".*/.air.toml": "file:///full/path/to/golang-air.json"
     }
 ```
-Make sure to replace `"file:///full/path/to/air-schema.json"` with the correct file path where the generated `"golang-air.json"` is located.
+Make sure to replace `"file:///full/path/to/golang-air.json"` with the correct file path where the generated `"golang-air.json"` is located.
 
 > **Side Note**: There is a slight problem as `".*/.air.toml"` is a regex, so dots match any character and not only dots, as it is intended, but I failed to find a way around this.
 
